@@ -4,20 +4,22 @@ This project has **no backend service**.
 Everything runs from Claude Desktop Code mode using:
 
 - skills for operational rules/workflow
-- a local SQLite MCP server for persistent storage
-- connector apps (Gmail, Slack, QBO, Google Sheets) from Claude Desktop
+- local MCP servers for SQLite persistence and direct QBO posting
+- connector apps (Gmail, Slack, Google Sheets) from Claude Desktop
 
 ## Architecture
 
 1. Claude Desktop is the UI/orchestrator.
 2. Skills define all business rules and required behavior.
 3. SQLite MCP server stores invoices, vendor master, PO register, and audit logs.
-4. External actions (Gmail/Slack/QBO/Sheets) are executed via Claude Desktop connectors.
+4. QBO MCP server handles bill posting to QuickBooks using OAuth tokens.
+5. External actions for Gmail/Slack/Sheets are executed via Claude Desktop connectors.
 
 ## Folder Map
 
-- `.claude/skills/invoice-agent-desktop/SKILL.md` - core rules/workflow
+- `.claude/skills/invoice-agent-desktop/skill.md` - core rules/workflow
 - `mcp/sqlite_store_server.py` - local SQLite MCP server
+- `mcp/qbo_mcp_server.py` - local QBO MCP server
 - `storage/schema.sql` - DB schema
 - `scripts/init_storage.py` - initialize/reset local DB
 - `.mcp.json` - MCP server registration
@@ -28,7 +30,7 @@ Everything runs from Claude Desktop Code mode using:
 ### 1) Python deps for MCP server
 
 ```powershell
-pip install mcp
+pip install mcp httpx
 ```
 
 ### 2) Initialize local SQLite storage
@@ -41,10 +43,10 @@ This creates:
 
 - `storage/invoice_agent.db`
 
-### 3) Load MCP server in Claude Desktop
+### 3) Load MCP servers in Claude Desktop
 
 `.mcp.json` is already included.  
-Restart Claude Desktop after opening this folder so MCP tools load.
+Restart Claude Desktop after opening this folder so MCP tools load (`sqlite_store` and `qbo`).
 
 ## Desktop-Only Execution Flow
 
@@ -62,7 +64,6 @@ Restart Claude Desktop after opening this folder so MCP tools load.
 
 ## End-User Prompt Examples (Non-Technical)
 
-- `Start my invoice workspace for today.`
 - `Load my vendor and PO records.`
 - `Get latest invoices from mail.`
 - `Show invoices waiting for review in a table.`
@@ -78,10 +79,10 @@ Use Claude Desktop connectors for:
 
 - Gmail (inbox read + email send)
 - Slack (alerts/notifications)
-- QuickBooks (bill posting)
 - Google Sheets (audit/report rows)
 
-No backend integration code is required in this project.
+QuickBooks posting is handled by the local `qbo` MCP server in this repo.
+No separate backend service is required.
 
 Detailed setup guide:
 
