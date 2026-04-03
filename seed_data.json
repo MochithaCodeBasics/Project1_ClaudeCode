@@ -1,0 +1,551 @@
+{
+  "_description": "Seed data for the AI Invoice Processing & Financial Reporting Automator. Load this into SQLite at application startup for development/testing.",
+  "_generated": "2026-03-12",
+  "vendor_master": [
+    {
+      "id": "V001",
+      "name": "Acme Office Supplies",
+      "aliases": [
+        "Acme Corp",
+        "ACME OFFICE SUPPLIES INC"
+      ],
+      "tax_id": "12-3456789",
+      "email": "billing@acmeoffice.com",
+      "bank_account": "****4521",
+      "bank_name": "Chase Bank",
+      "routing": "021000021",
+      "status": "active"
+    },
+    {
+      "id": "V002",
+      "name": "GlobalTech Solutions",
+      "aliases": [
+        "GlobalTech",
+        "GLOBALTECH SOLUTIONS LLC"
+      ],
+      "tax_id": "98-7654321",
+      "email": "ap@globaltech.io",
+      "bank_account": "****8833",
+      "bank_name": "Bank of America",
+      "routing": "026009593",
+      "status": "active"
+    },
+    {
+      "id": "V003",
+      "name": "Metro Cleaning Services",
+      "aliases": [
+        "Metro Cleaners",
+        "METRO CLEANING SVC"
+      ],
+      "tax_id": "55-1234567",
+      "email": "invoices@metrocleaning.com",
+      "bank_account": "****6102",
+      "bank_name": "Wells Fargo",
+      "routing": "121000248",
+      "status": "active"
+    },
+    {
+      "id": "V004",
+      "name": "Prime Logistics Inc",
+      "aliases": [
+        "Prime Logistics",
+        "PRIME LOGISTICS"
+      ],
+      "tax_id": "33-9876543",
+      "email": "finance@primelogistics.com",
+      "bank_account": "****7750",
+      "bank_name": "Citibank",
+      "routing": "021000089",
+      "status": "active"
+    },
+    {
+      "id": "V005",
+      "name": "DataVault Cloud Services",
+      "aliases": [
+        "DataVault",
+        "DATAVAULT CLOUD"
+      ],
+      "tax_id": "77-5551234",
+      "email": "billing@datavault.cloud",
+      "bank_account": "****3319",
+      "bank_name": "US Bank",
+      "routing": "091000019",
+      "status": "active"
+    },
+    {
+      "id": "V006",
+      "name": "Riverside Catering Co",
+      "aliases": [
+        "Riverside Catering"
+      ],
+      "tax_id": "44-6667788",
+      "email": "orders@riversidecatering.com",
+      "bank_account": "****2200",
+      "bank_name": "PNC Bank",
+      "routing": "043000096",
+      "status": "inactive"
+    },
+    {
+      "id": "V007",
+      "name": "ArgentoHome",
+      "aliases": [
+        "Argento Home",
+        "ARGENTOHOME LLC"
+      ],
+      "tax_id": "61-4482019",
+      "email": "billing@argentohome.com",
+      "bank_account": "****5514",
+      "bank_name": "Wells Fargo",
+      "routing": "121000248",
+      "status": "active"
+    }
+  ],
+  "purchase_orders": [
+    {
+      "po_number": "PO-2026-0100",
+      "vendor_id": "V001",
+      "status": "open",
+      "total_amount": 4250.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Premium Copy Paper (Case)",
+          "qty": 50,
+          "unit_price": 45.0,
+          "total": 2250.0
+        },
+        {
+          "description": "Ink Cartridges - Black",
+          "qty": 20,
+          "unit_price": 65.0,
+          "total": 1300.0
+        },
+        {
+          "description": "Desk Organizer Set",
+          "qty": 10,
+          "unit_price": 70.0,
+          "total": 700.0
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0101",
+      "vendor_id": "V002",
+      "status": "open",
+      "total_amount": 18500.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Annual Software License - Enterprise",
+          "qty": 1,
+          "unit_price": 12000.0,
+          "total": 12000.0
+        },
+        {
+          "description": "Implementation Support (hours)",
+          "qty": 50,
+          "unit_price": 130.0,
+          "total": 6500.0
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0102",
+      "vendor_id": "V003",
+      "status": "open",
+      "total_amount": 3600.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Monthly Office Cleaning - Floor 1",
+          "qty": 1,
+          "unit_price": 1200.0,
+          "total": 1200.0
+        },
+        {
+          "description": "Monthly Office Cleaning - Floor 2",
+          "qty": 1,
+          "unit_price": 1200.0,
+          "total": 1200.0
+        },
+        {
+          "description": "Monthly Office Cleaning - Floor 3",
+          "qty": 1,
+          "unit_price": 1200.0,
+          "total": 1200.0
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0103",
+      "vendor_id": "V004",
+      "status": "open",
+      "total_amount": 7800.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Freight Shipping - Domestic (pallets)",
+          "qty": 12,
+          "unit_price": 450.0,
+          "total": 5400.0
+        },
+        {
+          "description": "Warehouse Storage (monthly)",
+          "qty": 1,
+          "unit_price": 2400.0,
+          "total": 2400.0
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0104",
+      "vendor_id": "V005",
+      "status": "open",
+      "total_amount": 9600.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Cloud Hosting - Production (monthly)",
+          "qty": 12,
+          "unit_price": 600.0,
+          "total": 7200.0
+        },
+        {
+          "description": "Cloud Backup Service (monthly)",
+          "qty": 12,
+          "unit_price": 200.0,
+          "total": 2400.0
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0105",
+      "vendor_id": "V001",
+      "status": "open",
+      "total_amount": 1850.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Ergonomic Mouse",
+          "qty": 25,
+          "unit_price": 34.0,
+          "total": 850.0
+        },
+        {
+          "description": "USB-C Docking Station",
+          "qty": 10,
+          "unit_price": 100.0,
+          "total": 1000.0
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0107",
+      "vendor_id": "V007",
+      "status": "open",
+      "total_amount": 253.66,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "Home Furnishing Items",
+          "qty": 1,
+          "unit_price": 253.66,
+          "total": 253.66
+        }
+      ]
+    },
+    {
+      "po_number": "PO-2026-0106",
+      "vendor_id": "V004",
+      "status": "open",
+      "total_amount": 15000.0,
+      "fulfilled_amount": 0,
+      "line_items": [
+        {
+          "description": "International Freight - Container",
+          "qty": 2,
+          "unit_price": 5500.0,
+          "total": 11000.0
+        },
+        {
+          "description": "Customs Brokerage Fee",
+          "qty": 2,
+          "unit_price": 750.0,
+          "total": 1500.0
+        },
+        {
+          "description": "Insurance - Cargo",
+          "qty": 2,
+          "unit_price": 1250.0,
+          "total": 2500.0
+        }
+      ]
+    }
+  ],
+  "invoice_manifest": [
+    {
+      "filename": "INV_001_clean_acme_office.pdf",
+      "invoice_number": "ACM-2026-0451",
+      "vendor_name": "Acme Office Supplies",
+      "po_number": "PO-2026-0100",
+      "currency": "USD",
+      "subtotal": 4250.0,
+      "tax": 350.62,
+      "total": 4600.62,
+      "line_item_count": 3,
+      "expected_flags": [],
+      "scenario": "CLEAN - Known vendor, PO match, correct amounts",
+      "template": "corporate"
+    },
+    {
+      "filename": "INV_002_clean_metro_cleaning.pdf",
+      "invoice_number": "MC-2026-0312",
+      "vendor_name": "Metro Cleaning Services",
+      "po_number": "PO-2026-0102",
+      "currency": "USD",
+      "subtotal": 3600.0,
+      "tax": 0.0,
+      "total": 3600.0,
+      "line_item_count": 3,
+      "expected_flags": [],
+      "scenario": "CLEAN - Known vendor, PO match, exact amounts, no tax",
+      "template": "services"
+    },
+    {
+      "filename": "INV_003_clean_datavault.pdf",
+      "invoice_number": "DV-2026-1100",
+      "vendor_name": "DataVault Cloud Services",
+      "po_number": "PO-2026-0104",
+      "currency": "USD",
+      "subtotal": 800.0,
+      "tax": 0.0,
+      "total": 800.0,
+      "line_item_count": 2,
+      "expected_flags": [],
+      "scenario": "CLEAN - Monthly billing against annual PO",
+      "template": "tech_saas"
+    },
+    {
+      "filename": "INV_004_amount_mismatch_globaltech.pdf",
+      "invoice_number": "GT-2026-0088",
+      "vendor_name": "GlobalTech Solutions",
+      "po_number": "PO-2026-0101",
+      "currency": "USD",
+      "subtotal": 20450.0,
+      "tax": 1687.12,
+      "total": 22137.12,
+      "line_item_count": 2,
+      "expected_flags": [
+        "AMOUNT_MISMATCH"
+      ],
+      "scenario": "AMOUNT MISMATCH - Implementation hours exceed PO (65 vs 50 hrs, +$1,950, ~10.5% over)",
+      "template": "tech_saas"
+    },
+    {
+      "filename": "INV_005_amount_mismatch_prime.pdf",
+      "invoice_number": "PL-2026-0776",
+      "vendor_name": "Prime Logistics Inc",
+      "po_number": "PO-2026-0103",
+      "currency": "USD",
+      "subtotal": 8232.0,
+      "tax": 0.0,
+      "total": 8232.0,
+      "line_item_count": 3,
+      "expected_flags": [
+        "AMOUNT_MISMATCH"
+      ],
+      "scenario": "AMOUNT MISMATCH - Fuel surcharge line item not in PO (+$432, ~5.5% over)",
+      "template": "logistics"
+    },
+    {
+      "filename": "INV_006_duplicate_of_001.pdf",
+      "invoice_number": "ACM-2026-0451",
+      "vendor_name": "Acme Office Supplies",
+      "po_number": "PO-2026-0100",
+      "currency": "USD",
+      "subtotal": 4250.0,
+      "tax": 350.62,
+      "total": 4600.62,
+      "line_item_count": 3,
+      "expected_flags": [
+        "DUPLICATE"
+      ],
+      "scenario": "DUPLICATE - Exact copy of INV_001 (same invoice #, vendor, amount)",
+      "template": "corporate"
+    },
+    {
+      "filename": "INV_007_unknown_vendor.pdf",
+      "invoice_number": "NV-2026-0001",
+      "vendor_name": "NovaTech Consulting Group",
+      "po_number": null,
+      "currency": "USD",
+      "subtotal": 17850.0,
+      "tax": 0.0,
+      "total": 17850.0,
+      "line_item_count": 3,
+      "expected_flags": [
+        "UNKNOWN_VENDOR",
+        "PO_NOT_FOUND"
+      ],
+      "scenario": "UNKNOWN VENDOR + NO PO - Vendor not in master, no PO reference, verbal agreement only",
+      "template": "freelancer"
+    },
+    {
+      "filename": "INV_008_bank_change_globaltech.pdf",
+      "invoice_number": "GT-2026-0095",
+      "vendor_name": "GlobalTech Solutions",
+      "po_number": "PO-2026-0101",
+      "currency": "USD",
+      "subtotal": 18500.0,
+      "tax": 1526.25,
+      "total": 20026.25,
+      "line_item_count": 2,
+      "expected_flags": [
+        "BANK_ACCOUNT_CHANGED"
+      ],
+      "scenario": "BANK ACCOUNT CHANGED - Known vendor, but bank details differ from Vendor Master",
+      "template": "tech_saas"
+    },
+    {
+      "filename": "INV_009_no_po_riverside.pdf",
+      "invoice_number": "RC-2026-0200",
+      "vendor_name": "Riverside Catering Co",
+      "po_number": null,
+      "currency": "USD",
+      "subtotal": 6500.0,
+      "tax": 536.25,
+      "total": 7036.25,
+      "line_item_count": 3,
+      "expected_flags": [
+        "PO_NOT_FOUND"
+      ],
+      "scenario": "NO PO - Known (inactive) vendor, no purchase order, event-based expense",
+      "template": "services"
+    },
+    {
+      "filename": "INV_010_multipage_acme.pdf",
+      "invoice_number": "ACM-2026-0460",
+      "vendor_name": "Acme Office Supplies",
+      "po_number": "PO-2026-0105",
+      "currency": "USD",
+      "subtotal": 11670.0,
+      "tax": 962.78,
+      "total": 12632.78,
+      "line_item_count": 15,
+      "expected_flags": [
+        "AMOUNT_MISMATCH"
+      ],
+      "scenario": "MULTI-PAGE + AMOUNT MISMATCH - 15 line items across pages, only 2 items match PO-0105",
+      "template": "corporate"
+    },
+    {
+      "filename": "INV_011_scanned_style_prime.pdf",
+      "invoice_number": "PL-2026-0790",
+      "vendor_name": "Prime Logistics Inc",
+      "po_number": "PO-2026-0106",
+      "currency": "USD",
+      "subtotal": 15000.0,
+      "tax": 0.0,
+      "total": 15000.0,
+      "line_item_count": 3,
+      "expected_flags": [],
+      "scenario": "SCANNED STYLE - Clean invoice with logistics template",
+      "template": "logistics"
+    },
+    {
+      "filename": "INV_012_multicurrency_eur.pdf",
+      "invoice_number": "GT-EU-2026-0012",
+      "vendor_name": "GlobalTech Solutions",
+      "po_number": "PO-2026-0101",
+      "currency": "EUR",
+      "subtotal": 14700.0,
+      "tax": 2793.0,
+      "total": 17493.0,
+      "line_item_count": 2,
+      "expected_flags": [
+        "AMOUNT_MISMATCH"
+      ],
+      "scenario": "MULTI-CURRENCY (EUR) - Amount in EUR, VAT at 19%, exceeds USD PO value",
+      "template": "tech_saas"
+    },
+    {
+      "filename": "INV_013_suspicious_round_amount.pdf",
+      "invoice_number": "NV-2026-0002",
+      "vendor_name": "NovaTech Consulting Group",
+      "po_number": null,
+      "currency": "USD",
+      "subtotal": 50000.0,
+      "tax": 0.0,
+      "total": 50000.0,
+      "line_item_count": 1,
+      "expected_flags": [
+        "UNKNOWN_VENDOR",
+        "PO_NOT_FOUND",
+        "SUSPICIOUS_PATTERN"
+      ],
+      "scenario": "SUSPICIOUS - Unknown vendor, no PO, single round-number line ($50k), no detail, due on receipt",
+      "template": "freelancer"
+    },
+    {
+      "filename": "INV_014_dormant_vendor_riverside.pdf",
+      "invoice_number": "RC-2026-0201",
+      "vendor_name": "Riverside Catering Co",
+      "po_number": null,
+      "currency": "USD",
+      "subtotal": 3400.0,
+      "tax": 280.5,
+      "total": 3680.5,
+      "line_item_count": 2,
+      "expected_flags": [
+        "PO_NOT_FOUND",
+        "BANK_ACCOUNT_CHANGED",
+        "SUSPICIOUS_PATTERN"
+      ],
+      "scenario": "DORMANT VENDOR + BANK CHANGE - Inactive vendor, new bank details, no PO",
+      "template": "services"
+    },
+    {
+      "filename": "INV_015_multiple_flags.pdf",
+      "invoice_number": "ACM-2026-0451",
+      "vendor_name": "Acme Office Supplies",
+      "po_number": "PO-2026-0100",
+      "currency": "USD",
+      "subtotal": 4750.0,
+      "tax": 391.88,
+      "total": 5141.88,
+      "line_item_count": 4,
+      "expected_flags": [
+        "DUPLICATE",
+        "AMOUNT_MISMATCH",
+        "BANK_ACCOUNT_CHANGED",
+        "SUSPICIOUS_PATTERN"
+      ],
+      "scenario": "MULTIPLE FLAGS - Duplicate invoice#, bank change, amount mismatch, urgency pressure, short payment terms",
+      "template": "corporate"
+    }
+  ],
+  "bill_to_company": {
+    "name": "TechCorp Inc.",
+    "address": "456 Innovation Way, Austin, TX 78701",
+    "tax_id": "74-1234567"
+  },
+  "template_mapping": {
+    "corporate": [
+      "Acme Office Supplies"
+    ],
+    "tech_saas": [
+      "GlobalTech Solutions",
+      "DataVault Cloud Services"
+    ],
+    "services": [
+      "Metro Cleaning Services",
+      "Riverside Catering Co"
+    ],
+    "logistics": [
+      "Prime Logistics Inc"
+    ],
+    "freelancer": [
+      "NovaTech Consulting Group"
+    ]
+  }
+}
