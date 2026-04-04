@@ -157,18 +157,16 @@ class QboClient:
     def query(self, sql: str) -> Any:
         self._check_config()
         path = f"/v3/company/{self.realm_id}/query"
-        params = {"minorversion": 75}
+        params = {"query": sql, "minorversion": "75"}
         headers = self._auth_headers()
-        headers["Content-Type"] = "text/plain"
         with httpx.Client(timeout=45.0) as http:
-            resp = http.post(f"{QBO_API_BASE}{path}", headers=headers, params=params, content=sql.encode("utf-8"))
+            resp = http.get(f"{QBO_API_BASE}{path}", headers=headers, params=params)
         payload: Any = resp.json() if "application/json" in (resp.headers.get("content-type") or "") else {"raw": resp.text}
         if resp.status_code == 401:
             self.refresh_access_token()
             headers = self._auth_headers()
-            headers["Content-Type"] = "text/plain"
             with httpx.Client(timeout=45.0) as http_retry:
-                resp = http_retry.post(f"{QBO_API_BASE}{path}", headers=headers, params=params, content=sql.encode("utf-8"))
+                resp = http_retry.get(f"{QBO_API_BASE}{path}", headers=headers, params=params)
             payload = resp.json() if "application/json" in (resp.headers.get("content-type") or "") else {"raw": resp.text}
         if resp.status_code >= 400:
             raise QboApiError(resp.status_code, payload)

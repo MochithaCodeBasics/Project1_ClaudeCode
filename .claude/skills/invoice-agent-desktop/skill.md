@@ -46,16 +46,22 @@ INGESTED ──(validation pass)──► READY_FOR_APPROVAL ──(chat: approv
 
 ## PDF Extraction on Ingest
 
+Claude is the extraction engine. There is no OCR service, no document intelligence pipeline, no regex parser. Claude reads whatever text the Gmail MCP returns and uses its own language understanding to extract structured fields.
+
 When pulling invoices from Gmail:
 
 1. Use `gmail_read_message` to get the full message including attachment metadata.
-2. For each attachment with a PDF mimeType:
-   - Inspect filename for clues (vendor name, invoice number patterns).
-   - Read the email body — senders often include key invoice fields (invoice #, amount, PO #, due date) in the body text.
-   - Extract all structured fields visible in the email body or snippet: `invoice_number`, `vendor_name`, `po_number`, `subtotal`, `tax`, `total`, `due_date`, `bank_account`.
-   - If a field cannot be extracted from body/snippet, mark it as UNCONFIRMED in notes.
+2. For each email, extract structured fields using all available text:
+   - Fields to extract: `invoice_number`, `vendor_name`, `po_number`, `subtotal`, `tax`, `total`, `due_date`, `bank_account`
+   - Sources in priority order: email body → subject line → attachment filename (for vendor/invoice clues)
+   - Do NOT use `seed_data.json` or the invoice manifest to fill invoice field values. That file is only used as the vendor master and PO register for cross-referencing — never as a source of invoice amounts, invoice numbers, or other per-invoice data.
+   - If a field cannot be extracted from readable text, mark it as UNCONFIRMED in notes.
 3. If the Gmail MCP returns attachment content (base64 or text), parse it directly.
-4. If attachment content is not accessible, record `notes: "PDF content not readable via connector — fields extracted from email body only"` and flag `AMOUNT_UNCONFIRMED` if amounts could not be verified.
+4. If attachment content is not accessible (connector returns only metadata/filename):
+   - Extract whatever fields are present in the email body
+   - Mark every field that could not be confirmed from readable text as UNCONFIRMED in notes
+   - Add flag `AMOUNT_UNCONFIRMED` if subtotal/tax/total could not be verified
+   - Record `notes: "PDF not accessible via connector — fields extracted from email body/subject/filename only"`
 5. Cross-reference every extracted field against vendor master and PO register before setting status.
 6. An email with no attachment and no invoice fields in the body is NOT an invoice — skip it with a log entry.
 
@@ -77,15 +83,47 @@ When prompted `send slack alert of invoice #X` or `notify team about invoice #X`
 
 1. Load invoice #X from storage.
 2. Find the finance/AP Slack channel (search for channels named `#finance`, `#ap`, `#invoices`, or ask user once and remember).
-3. Send a Slack message in this exact format:
+3. Choose the correct message template based on invoice status and flags:
 
+**If status is `FLAGGED` with flag `BANK_ACCOUNT_CHANGED`:**
+```
+🚨 *Invoice Flagged — Manual Review Required*
+
+*Invoice #:* <invoice_number>
+*Vendor:* <vendor_name>
+*PO #:* <po_number>
+*Amount:* $<total> (USD)
+*Status:* FLAGGED 🔴
+*Reason:* Bank account on invoice does not match vendor master on file (****<last4_of_master_account>). This may indicate a fraudulent bank change request. Please verify directly with <vendor_name> before approving payment. Do *not* process until confirmed.
+
+_Sent using Claude_
+```
+
+**If status is `FLAGGED` with any other flag:**
+```
+🚨 *Invoice Flagged — Manual Review Required*
+
+*Invoice #:* <invoice_number>
+*Vendor:* <vendor_name>
+*PO #:* <po_number>
+*Amount:* $<total> (USD)
+*Status:* FLAGGED 🔴
+*Reason:* <human-readable explanation of the flag(s)>
+
+To approve: reply in this channel with: approve invoice <id>
+To reject: reply in this channel with: reject invoice <id> — <reason>
+
+_Sent using Claude_
+```
+
+**For all other statuses (`READY_FOR_APPROVAL`, `APPROVED`, etc.):**
 ```
 *Invoice Alert — Action Required*
 
 *Invoice #:* <invoice_number>
 *Vendor:* <vendor_name>
-*Amount:* <total> <currency>
-*PO:* <po_number>
+*PO #:* <po_number>
+*Amount:* $<total> (USD)
 *Status:* <status>
 *Flags:* <flags or "None">
 
@@ -100,11 +138,79 @@ Then confirm your decision back in Claude to update the record.
 
 ## Email Alert Flow
 
-When prompted `send email alert of invoice #X` or `email the team about invoice #X`:
+When prompted `send email alert of invoice #X`, `email the team about invoice #X`, or `send alert of invoice #X to mail`:
 
 1. Load invoice #X from storage.
-2. Identify the recipient (ask user once if not previously set).
-3. Create and send a Gmail draft or direct email in this format:
+2. Leave the `to` field blank in the draft — do not set any default recipient. The user will fill it in before sending.
+3. Use `gmail_create_draft` (not send) to create the email draft. Confirm draft creation to the user with a link.
+4. Choose the correct subject and body template based on invoice status and flags:
+
+**If status is `FLAGGED` with flag `BANK_ACCOUNT_CHANGED`:**
+
+**Subject:** `URGENT: Invoice Flagged - Bank Account Change Detected | <vendor_name> | <invoice_number>`
+
+**Body:**
+```
+Hi,
+
+This is an automated alert from the Invoice Processing System.
+
+⚠️ ACTION REQUIRED — Invoice has been flagged and requires manual verification before approval.
+
+Invoice Details:
+- Invoice #: <invoice_number>
+- Vendor: <vendor_name>
+- PO #: <po_number>
+- Amount: $<total> (USD)
+- Status: FLAGGED
+
+Reason for Flag:
+The bank account on this invoice does not match the vendor master on file (master: ****<last4_of_master_account>). This may indicate a fraudulent bank change request (Business Email Compromise / BEC).
+
+Required Action:
+Please verify the bank account change directly with <vendor_name> via a known, trusted contact before approving payment. Do NOT process this invoice until the change has been confirmed.
+
+Do not reply to any email from the vendor requesting this change without independent verification.
+
+Regards,
+Invoice Processing System
+```
+
+**If status is `FLAGGED` with any other flag:**
+
+**Subject:** `URGENT: Invoice Flagged - Action Required | <vendor_name> | <invoice_number>`
+
+**Body:**
+```
+Hi,
+
+This is an automated alert from the Invoice Processing System.
+
+⚠️ ACTION REQUIRED — Invoice has been flagged and requires manual verification before approval.
+
+Invoice Details:
+- Invoice #: <invoice_number>
+- Vendor: <vendor_name>
+- PO #: <po_number>
+- Amount: $<total> (USD)
+- Status: FLAGGED
+
+Reason for Flag:
+<human-readable explanation of the flag(s)>
+
+Required Action:
+Please review this invoice carefully before approving payment.
+
+To approve: reply to this email with: approve invoice <id>
+To reject:  reply to this email with: reject invoice <id> — <reason>
+
+Then confirm your decision in Claude to update the record.
+
+Regards,
+Invoice Processing System
+```
+
+**For all other statuses (`READY_FOR_APPROVAL`, `APPROVED`, etc.):**
 
 **Subject:** `Invoice Alert: <invoice_number> from <vendor_name> — <status>`
 
@@ -116,7 +222,7 @@ The following invoice requires your review:
 
 Invoice #:   <invoice_number>
 Vendor:      <vendor_name>
-Amount:      <total> <currency>
+Amount:      $<total> (USD)
 PO:          <po_number>
 Status:      <status>
 Flags:       <flags or "None">
@@ -125,10 +231,13 @@ To approve: reply to this email with: approve invoice <id>
 To reject:  reply to this email with: reject invoice <id> — <reason>
 
 Then confirm your decision in Claude to update the record.
+
+Regards,
+Invoice Processing System
 ```
 
-4. Log the alert to audit_logs with action `EMAIL_ALERT_SENT`.
-5. Confirm to user in chat that the email was sent.
+5. Log the alert to audit_logs with action `EMAIL_DRAFT_CREATED`.
+6. Confirm to user in chat that the draft was created, and remind them to review and send it from Gmail.
 
 ## Approval Flow (Chat)
 
@@ -158,6 +267,53 @@ When operator says `post invoice #X to QBO` or `post approved invoices to accoun
 4. On failure: transition to `POST_FAILED`, log `POST_FAILED` with error details.
 5. Report results to user in a summary table.
 
+## Month-End Report Flow
+
+When prompted `create month-end report`, `share month-end summary`, `post month-end report`, or similar:
+
+1. Call `get_report_summary` for the current month/year and `list_invoices` to gather all data.
+2. Build a formatted report covering: summary totals, status breakdown, invoice detail table, flag summary, and key observations.
+3. **Slack:** Send the report as a message to the #finance-alerts channel (channel ID from memory or search).
+4. **Email:** Send as a real email (NOT a draft) using `gmail_send_email`. The recipient must be the same Gmail address connected for invoice ingestion — identify this by calling `gmail_get_profile` to retrieve the authenticated user's email address. Never leave the `to` field blank for month-end reports.
+5. Log to audit_logs with action `MONTH_END_REPORT_SHARED`, including Slack link and email confirmation.
+6. Confirm to user that the report was sent to both Slack and email.
+
+**Email template:**
+
+**Subject:** `Invoice Processing Report — <YYYY-MM>`
+
+**Body:**
+```
+Hi,
+
+Please find below the month-end invoice processing report.
+
+SUMMARY
+- Report Date: <today>
+- Period: <YYYY-MM>
+- Total Invoices Processed: <count>
+- Total Payables: $<total>
+- Posted to QBO: $<posted_total>
+- Pending Review (Flagged): $<flagged_total>
+- Approved (not yet posted): $<approved_total>
+- Rejected: $<rejected_total>
+
+STATUS BREAKDOWN
+- POSTED: <count> invoice(s) — $<amount>
+- FLAGGED: <count> invoice(s) — $<amount>
+- APPROVED: <count> invoice(s) — $<amount>
+- REJECTED: <count> invoice(s) — $<amount>
+
+INVOICE DETAIL
+<for each invoice: invoice_number | vendor_name | $total | status | flags>
+
+KEY OBSERVATIONS
+<numbered list of notable items>
+
+Regards,
+Invoice Processing System
+```
+
 ## Plain-English Intent Mapping
 
 | What user says | What to do |
@@ -171,7 +327,7 @@ When operator says `post invoice #X to QBO` or `post approved invoices to accoun
 | `Post invoice <id> to QBO` / `Post approved invoices` | Post to QBO, mark POSTED or POST_FAILED |
 | `Send slack alert of invoice <id>` | Send Slack message with invoice details + approve/reject instructions |
 | `Send email alert of invoice <id>` | Send email with invoice details + approve/reject instructions |
-| `Share month-end summary` | Compute report, send Slack + email, append sheet audit row |
+| `Share month-end summary` / `Create month-end report` | Compute report, send Slack message + send email (not draft) to ingesting Gmail, log audit |
 
 ## Storage Tools
 
